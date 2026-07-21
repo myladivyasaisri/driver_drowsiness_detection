@@ -95,7 +95,6 @@ def main():
             ear = (calculate_ear(leftEye) + calculate_ear(rightEye)) / 2.0
             mar = calculate_mar(mouth)
 
-            # --- కలర్ చేంజ్ చేసాను: (0, 255, 0) అంటే ప్యూర్ గ్రీన్ కలర్ ---
             cv2.drawContours(frame, [cv2.convexHull(leftEye)], -1, (0, 255, 0), 1)
             cv2.drawContours(frame, [cv2.convexHull(rightEye)], -1, (0, 255, 0), 1)
             cv2.drawContours(frame, [cv2.convexHull(mouth)], -1, (0, 255, 0), 1)
