@@ -106,7 +106,7 @@ python main.py
 ### MYLA DIVYA SAI SRI
 *Artificial Intelligence & Machine Learning (AI/ML) Student*
 
-*   **LinkedIn**: www.linkedin.com/in/myladivyasaisr
+*   **LinkedIn**: www.linkedin.com/in/myladivyasaisri
 *   **GitHub**: https://github.com/myladivyasaisri
 
 ---
