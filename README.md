@@ -1,70 +1,70 @@
-# 🚗 Vision-Based Advanced Driver Assistance System (ADAS) for Real-Time Fatigue & Anomaly Detection
-
-[![Python Version](https://shields.io)](https://python.org)
-[![Framework](https://shields.io)](https://opencv.org)
-[![Target Hardware](https://shields.io)](https://raspberrypi.com)
-[![Operational Status](https://shields.io)]()
-
-An enterprise-grade computer vision solution deployed to mitigate commercial and transit accidents caused by operator exhaustion and micro-sleep events [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System]. This framework leverages localized multi-node facial mesh mapping to capture high-frequency physical anomalies (eyelid drooping and yawning vectors), executing deterministic tiered safety countermeasures in real-time.
+# Driver Drowsiness Detection System
+### *An Edge-AI Safety System for Real-Time Fatigue Monitoring*
 
 ---
 
-## ⚙️ Core System Architecture Features
+## 📌 Project Overview
+This project is an advanced real-time computer vision framework designed to mitigate highway transit accidents caused by operator exhaustion and micro-sleep events [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System]. 
 
-| Sub-System Component | Engineering Specification | Implementation Advantage |
-| :--- | :--- | :--- |
-| **Unified Chrome-Green Mesh** | 2D Point Contours Mapping (`BGR: 0, 255, 0`) | Provides high-contrast isolation overlays around ocular and labial zones during low-light driver environments [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System]. |
-| **Tiered Alarm Escalation** | Multi-Stage Signal Evaluation Engine | Bypasses binary alert limits. Differentiates between soft fatigue (warning) and critical micro-sleep states (alarm). |
-| **Threaded Audio Execution** | Asynchronous Background Subprocesses (`threading`) | Prevents main thread pipeline drops; keeps camera loop processing stable at a constant frame rate without lag [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System]. |
-| **Automotive Black Box Log** | Telemetry Stream Appender (`drowsiness_logs.txt`) | Generates chronological, immutable data footprints with calendar timestamps for corporate audit compliance. |
+By processing live camera frames, the system maps facial telemetry landmarks using spatial equations to calculate eye and mouth ratios, instantly executing audio alarms when safety limits are breached.
 
 ---
 
-## 🔬 Mathematical Framework & Diagnostics Telemetry
+## 🚀 Key System Features
 
-The mathematical backbone utilizes scaling-invariant spatial ratios. This guarantees execution parity regardless of camera distance variations from the dashboard.
-
-### 1. Eye Aspect Ratio (EAR) Matrix
-Tracks 6 localized spatial coordinates surrounding the eyelids structure to isolate micro-sleep signatures:
-
-\[\text{EAR} = \frac{\vert{}\vert{}p_2 - p_6\vert{}\vert{} + \vert{}\vert{}p_3 - p_5\vert{}\vert{}}{2 \vert{}\vert{}p_1 - p_4\vert{}\vert{}}\]
-
-*   **`🟢 STATUS: AWAKE`** → EAR ≥ 0.25 (Stable tracking behavior)
-*   **`🟠 STATUS: DROWSY (WARNING)`** → EAR < 0.25 (≥ 10 continuous frames; triggers soft chime loop)
-*   **`🔴 STATUS: DROWSY (CRITICAL!)`** → EAR < 0.25 (≥ 20 continuous frames; executes high-pitched rapid double-beep sirens)
-
-### 2. Mouth Aspect Ratio (MAR) Matrix
-Tracks 20 internal labial nodes to continuously compute vertical expansion vectors during active driving cycles:
-
-\[\text{MAR} = \frac{\vert{}\vert{}p_{51} - p_{59}\vert{}\vert{} + \vert{}\vert{}p_{53} - p_{57}\vert{}\vert{}}{2 \vert{}\vert{}p_{49} - p_{55}\vert{}\vert{}}\]
-
-*   **Normal Operations** → MAR ≤ 0.60 (Speaking/breathing baseline)
-*   **`🟠 STATUS: YAWNING DETECTED`** → MAR > 0.60 (≥ 15 continuous frames; triggers fatigue cooldown routines)
+*   **Dynamic HUD Status Display**: Real-time driver conditions are flashed directly onto the video feed layout (`AWAKE`, `DROWSY (WARNING)`, or `DROWSY (CRITICAL!)`).
+*   **Unified Chrome-Green Mesh**: Standardized bright green boundaries (`BGR: 0, 255, 0`) draw clean outlines around ocular and labial zones for optimal low-light tracking [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System].
+*   **Multi-Stage Escalated Alarm**:
+    *   *Soft Warning*: Sounds single tones during repetitive yawn loops.
+    *   *Critical Siren*: Sounds aggressive, rapid double-beeps during deep micro-sleeps.
+*   **Threaded Audio Subprocesses**: Uses background threads to play alert buzzers asynchronously, preventing display frame drops or screen lag [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System].
+*   **Black Box Event Logging**: Automatically records event logs with calendar timestamps into a local repository file for administrative safety audits.
 
 ---
 
-## 📁 System Directory Blueprint
+## 📁 Repository Directory Map
 
 ```text
 driver_drowsiness_detection/
 │
 ├── models/
-│   └── shape_predictor_68_face_landmarks.dat  # Compiled network weights database
+│   └── shape_predictor_68_face_landmarks.dat  # Neural network weights database
 │
 ├── utils/
 │   ├── __init__.py
-│   └── metrics.py                             # Telemetry calculation formulas (EAR, MAR)
+│   └── metrics.py                             # Formulas file (EAR & MAR math)
 │
-├── config.py                                  # Modular operational thresholds hub
-├── main.py                                    # Execution engine & high-FPS video loop
-├── requirements.txt                           # Dependency installer document
-└── drowsiness_logs.txt                        # Automated diagnostic history document
+├── config.py                                  # Calibration thresholds hub
+├── main.py                                    # Central camera loops engine
+├── requirements.txt                           # Software dependencies list
+└── drowsiness_logs.txt                        # Automated telemetry data file
 ```
 
 ---
 
-## 📊 Black Box Telemetry Sheet Sample (`drowsiness_logs.txt`)
-The framework writes atomic operation entries automatically into a local repository file for administrative reviews:
+## 🔬 Mathematical Framework & Diagnostics
+
+The core analytical loops rely on scaling-invariant mathematical fractions, guaranteeing accurate processing regardless of how close or far the driver sits from the lens.
+
+### 1. Eye Aspect Ratio (EAR)
+Calculates horizontal and vertical eyelids vectors:
+\[\text{EAR} = \frac{\vert{}\vert{}p_2 - p_6\vert{}\vert{} + \vert{}\vert{}p_3 - p_5\vert{}\vert{}}{2 \vert{}\vert{}p_1 - p_4\vert{}\vert{}}\]
+
+*   **`🟢 STATUS: AWAKE`** → EAR ≥ 0.25
+*   **`🟠 STATUS: DROWSY (WARNING)`** → EAR < 0.25 *(Triggers soft loop after 10 frames)*
+*   **`🔴 STATUS: DROWSY (CRITICAL!)`** → EAR < 0.25 *(Triggers double-beep sirens after 20 frames)*
+
+### 2. Mouth Aspect Ratio (MAR)
+Calculates inner lip dilation layouts during active driving shifts:
+\[\text{MAR} = \frac{\vert{}\vert{}p_{51} - p_{59}\vert{}\vert{} + \vert{}\vert{}p_{53} - p_{57}\vert{}\vert{}}{2 \vert{}\vert{}p_{49} - p_{55}\vert{}\vert{}}\]
+
+*   **Normal Baseline** → MAR ≤ 0.60
+*   **`🟠 STATUS: YAWNING DETECTED`** → MAR > 0.60 *(Triggers cooldown logging after 15 frames)*
+
+---
+
+## 📊 Black Box Logs Sample (`drowsiness_logs.txt`)
+The system appends clean chronological records automatically during active run states:
 ```text
 [2026-07-21 14:30:05] SYSTEM START: Safety monitoring initialized.
 [2026-07-21 14:32:14] ALERT: Driver was Drowsy - Duration: 2.45 seconds
@@ -74,21 +74,20 @@ The framework writes atomic operation entries automatically into a local reposit
 
 ---
 
-## 💻 Installation & Pipeline Execution
+## 💻 Technical Setup & Execution
 
-### 1. Environment Package Dependencies Configuration
-Deploy all mandatory dependencies into your localized sandbox compiler terminal environment:
+### 1. Dependencies Configuration
+Deploy all mandatory dependencies into your localized sandbox environment by running:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Facial Landmark Weight Map Fetch
-Ensure your 68-point dlib neural weights binary file is situated inside the specific directory target:
-1. Fetch the binary asset from the [Official Dlib Repository Container](https://huggingface.co).
-2. Save the `.dat` file inside the `models/` directory.
+### 2. Neural Weights Initialization
+1. Download the pre-trained data file from the [Official Dlib Container](https://huggingface.co).
+2. Save the compiled file as `shape_predictor_68_face_landmarks.dat` inside your `models/` directory.
 
-### 3. Initialize Engine Stream
-Fire up the central driver safety cockpit application frame loop via PowerShell or Command Prompt:
+### 3. Running the Engine
+Initialize the central driver dashboard panel loop using your terminal interface:
 ```bash
 python main.py
 ```
@@ -96,14 +95,19 @@ python main.py
 ---
 
 ## 🎮 Interface Controls
-*   **Key Command `q`**: Safely terminates camera sensor input pipelines, flushes stream buffer allocations to the logging file, silences background thread signals, and closes active GUI display frames cleanly.
+*   **Key Command `q`**: Safely stops camera input channels, flushes file writing streams, terminates background threads, and kills display windows cleanly.
 
 ---
 
-## 👩‍💻 Principal Engineer & Author
+---
+
+## 👩‍💻 Author
 
 ### MYLA DIVYA SAI SRI
 *Artificial Intelligence & Machine Learning (AI/ML) Student*
 
-- 💼 **[Connect on LinkedIn](www.linkedin.com/in/myladivyasaisri)**
-- 🐙 **[Follow on GitHub](https://github.com/myladivyasaisri)**
+*   **LinkedIn**: www.linkedin.com/in/myladivyasaisr
+*   **GitHub**: https://github.com/myladivyasaisri
+
+---
+
