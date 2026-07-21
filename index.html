@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Drowsiness Detector - Live Demo</title>
-    <!-- CSS Layout Style -->
     <script src="https://jsdelivr.net"></script>
-    <!-- AI Frameworks for Browser Camera Core -->
+    <!-- Core Web Framework Components for Browsers -->
     <script src="https://jsdelivr.net"></script>
     <script src="https://jsdelivr.net"></script>
     <script src="https://jsdelivr.net"></script>
@@ -14,23 +13,20 @@
 </head>
 <body class="bg-slate-900 text-white font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- Title Panel -->
     <header class="bg-slate-800 border-b border-slate-700 py-6 text-center shadow-md">
         <h1 class="text-2xl font-black text-blue-400">🚗 Real-Time Driver Drowsiness & Yawn Detector</h1>
         <p class="text-slate-400 mt-1 text-sm font-medium">Project Author: <span class="bg-blue-600 px-3 py-1 rounded-full text-xs font-bold text-white shadow">MYLA DIVYA SAI SRI</span></p>
     </header>
 
-    <!-- UI View Framework -->
     <main class="max-w-md mx-auto my-8 p-6 bg-slate-800 rounded-xl shadow-xl flex flex-col items-center border border-slate-700 flex-grow">
-        <p class="text-slate-300 text-xs text-center mb-4">Click "Start Webcam Demo" and grant camera permissions to test fatigue parameters live.</p>
+        <p class="text-slate-300 text-xs text-center mb-4">Click the button below, allow webcam permission, and look directly at the screen.</p>
 
-        <!-- Video Box Wrapper -->
         <div class="relative w-full aspect-video bg-slate-950 rounded-lg overflow-hidden border border-slate-600 flex items-center justify-center">
             <video id="webcam" class="absolute w-full h-full object-cover transform -scale-x-100 hidden" autoplay playsinline></video>
             <canvas id="output" class="absolute w-full h-full object-cover transform -scale-x-100 z-10"></canvas>
             <div id="loading" class="text-slate-400 text-xs font-medium flex flex-col items-center gap-2">
                 <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <span>Downloading Browser AI Weights...</span>
+                <span>Loading Framework Engines...</span>
             </div>
         </div>
 
@@ -38,7 +34,6 @@
             Start Webcam Demo
         </button>
 
-        <!-- Diagnostics Results Display -->
         <div class="w-full grid grid-cols-2 gap-4 mt-6">
             <div class="bg-slate-900 p-3 rounded-lg text-center border border-slate-700">
                 <span class="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">EAR (Eye Ratio)</span>
@@ -59,7 +54,6 @@
         Compiled successfully via Client-side WebAssembly static streaming framework.
     </footer>
 
-    <!-- Processing Loop Script -->
     <script>
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('output');
@@ -74,17 +68,16 @@
         let model;
         let audioCtx = null;
 
-        // Sound System
         function triggerBeep() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.frequency.setValueAtTime(2500, audioCtx.currentTime); // 2500Hz professional chime
+            osc.frequency.setValueAtTime(2500, audioCtx.currentTime); 
             gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.25);
+            osc.stop(audioCtx.currentTime + 0.20);
         }
 
         function dist(p1, p2) {
@@ -107,48 +100,58 @@
                 loadingDiv.classList.add('hidden');
                 startBtn.classList.add('hidden');
                 
-                canvas.width = 640;
-                canvas.height = 480;
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
                 detectFrame();
             } catch (err) {
-                alert("Webcam permission denied or camera resource locked!");
+                alert("Webcam permission denied or resource locked!");
             }
         });
 
         async function detectFrame() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                // Ensure canvas sizes dynamically track video input lengths
+                if (canvas.width !== video.videoWidth) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                }
+
                 const predictions = await model.estimateFaces(video);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
                 if (predictions.length > 0) {
                     const kp = predictions[0].keypoints;
                     
-                    // Coordinates mapping extractors
-                    const p1 = kp[133], p2 = kp[159], p3 = kp[145], p4 = kp[33]; 
-                    const p5 = kp[362], p6 = kp[386], p7 = kp[374], p8 = kp[263];
-                    const m1 = kp[78], m2 = kp[81], m3 = kp[178], m4 = kp[308];
+                    // Precise MediaPipe Mesh Indices for Eyelids Mapping Coordinates
+                    const leftEyePts = [kp[33], kp[160], kp[158], kp[133], kp[153], kp[144]];
+                    const rightEyePts = [kp[362], kp[385], kp[387], kp[263], kp[373], kp[380]];
+                    
+                    // Precise MediaPipe Inner Lip Tracking Coordinates for Yawn Measurement
+                    const mouthPts = [kp[78], kp[81], kp[13], kp[311], kp[308], kp[317], kp[14], kp[87]];
 
-                    // Telemetry analytics equations
-                    const earL = dist(p2, p3) / dist(p1, p4);
-                    const earR = dist(p6, p7) / dist(p5, p8);
+                    // Draw a visual marker overlay on all evaluated coordinate mesh spots
+                    ctx.fillStyle = '#10B981';
+                    [...leftEyePts, ...rightEyePts, ...mouthPts].forEach(pt => {
+                        ctx.beginPath(); ctx.arc(pt.x, pt.y, 2, 0, 2 * Math.PI); ctx.fill();
+                    });
+
+                    // Accurate JavaScript Eye Aspect Ratio Mathematics
+                    const earL = (dist(leftEyePts[1], leftEyePts[5]) + dist(leftEyePts[2], leftEyePts[4])) / (2.0 * dist(leftEyePts[0], leftEyePts[3]));
+                    const earR = (dist(rightEyePts[1], rightEyePts[5]) + dist(rightEyePts[2], rightEyePts[4])) / (2.0 * dist(rightEyePts[0], rightEyePts[3]));
                     const ear = (earL + earR) / 2.0;
-                    const mar = dist(m2, m3) / dist(m1, m4);
+
+                    // Accurate JavaScript Mouth Aspect Ratio Mathematics for Inner Lips
+                    const mar = (dist(mouthPts[1], mouthPts[7]) + dist(mouthPts[2], mouthPts[6]) + dist(mouthPts[3], mouthPts[5])) / (2.0 * dist(mouthPts[0], mouthPts[4]));
 
                     earEl.innerText = ear.toFixed(2);
                     marEl.innerText = mar.toFixed(2);
 
-                    // Overlay tracking boxes indicators
-                    ctx.fillStyle = '#10B981';
-                    [p1, p2, p3, p4, p5, p6, p7, p8, m1, m2, m3, m4].forEach(pt => {
-                        ctx.beginPath(); ctx.arc(pt.x, pt.y, 2, 0, 2 * Math.PI); ctx.fill();
-                    });
-
-                    // Evaluate thresholds
-                    if (ear < 0.24) {
+                    // Real-Time Threshold Evaluation Rules
+                    if (ear < 0.22) {
                         statusEl.innerText = "🚨 DROWSINESS ALERT!!!";
                         statusEl.className = "font-bold text-red-500 animate-pulse text-sm";
                         triggerBeep();
-                    } else if (mar > 0.58) {
+                    } else if (mar > 0.50) {
                         statusEl.innerText = "🥱 YAWN DETECTED!!!";
                         statusEl.className = "font-bold text-amber-500 animate-pulse text-sm";
                         triggerBeep();
