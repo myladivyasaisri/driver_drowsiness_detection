@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode, VideoHTMLAttributes
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode
 import cv2
 import dlib
 import numpy as np
@@ -8,6 +8,35 @@ st.set_page_config(page_title="Driver Drowsiness Detector", layout="wide")
 st.title("Driver Drowsiness Detection System")
 st.subheader("Real-Time Fatigue Monitoring Interface")
 
+# Hidden HTML5 Audio tags for browser speaker control
+st.markdown(
+    """
+    <audio id="drowsy_alarm" loop>
+        <source src="https://soundjay.com" type="audio/mp3">
+    </audio>
+    <audio id="yawn_alarm" loop>
+        <source src="https://soundjay.com" type="audio/mp3">
+    </audio>
+    <script>
+        function playAlarm(type) {
+            var drowsy = document.getElementById('drowsy_alarm');
+            var yawn = document.getElementById('yawn_alarm');
+            if (type === 'DROWSY') {
+                drowsy.play().catch(e => {});
+                yawn.pause();
+            } else if (type === 'YAWNING') {
+                yawn.play().catch(e => {});
+                drowsy.pause();
+            } else {
+                drowsy.pause();
+                yawn.pause();
+            }
+        }
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
 def calculate_ear(eye):
     A = np.linalg.norm(np.array(eye[1]) - np.array(eye[5]))
     B = np.linalg.norm(np.array(eye[2]) - np.array(eye[4]))
@@ -15,9 +44,9 @@ def calculate_ear(eye):
     return (A + B) / (2.0 * C)
 
 def calculate_mar(mouth):
-    A = np.linalg.norm(np.array(mouth[13]) - np.array(mouth[19]))
-    B = np.linalg.norm(np.array(mouth[15]) - np.array(mouth[17]))
-    C = np.linalg.norm(np.array(mouth[12]) - np.array(mouth[16]))
+    A = np.linalg.norm(np.array(mouth[3]) - np.array(mouth[9]))  # p51 - p59
+    B = np.linalg.norm(np.array(mouth[5]) - np.array(mouth[7]))  # p53 - p57
+    C = np.linalg.norm(np.array(mouth[1]) - np.array(mouth[6]))  # p49 - p55
     return (A + B) / (2.0 * C)
 
 detector = dlib.get_frontal_face_detector()
@@ -54,7 +83,7 @@ class DrowsinessTransformer(VideoTransformerBase):
             if ear < 0.23:
                 status = "DROWSY"
                 color = (0, 0, 255)
-            elif mar > 0.55:
+            elif mar > 0.58:
                 status = "YAWNING"
                 color = (0, 165, 255)
             else:
@@ -64,6 +93,8 @@ class DrowsinessTransformer(VideoTransformerBase):
             cv2.putText(img, f"STATUS: {status}", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
             cv2.putText(img, f"EAR: {ear:.2f}  MAR: {mar:.2f}", (30, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
             
+        # Push sound control signal straight to web interface window
+        st.components.v1.html(f"<script>window.parent.playAlarm('{status}');</script>", height=0, width=0)
         return img
 
 webrtc_streamer(
@@ -71,6 +102,5 @@ webrtc_streamer(
     mode=WebRtcMode.SENDRECV,
     video_transformer_factory=DrowsinessTransformer,
     media_stream_constraints={"video": True, "audio": False},
-    video_html_attrs=VideoHTMLAttributes(autoPlay=True, controls=False, muted=False),
     async_processing=True
 )
