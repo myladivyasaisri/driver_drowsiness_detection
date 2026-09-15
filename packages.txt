@@ -1,0 +1,3 @@
+cmake
+libgfortran5
+freeglut3-dev
