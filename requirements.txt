@@ -1,7 +1,5 @@
-opencv-python>=4.8.0
-dlib>=19.24.0
-scipy>=1.10.0
-imutils>=0.5.4
-streamlit
-streamlit-webrtc
-
+streamlit>=1.35.0
+streamlit-webrtc>=0.47.0
+opencv-python-headless
+dlib
+numpy<2.0.0
