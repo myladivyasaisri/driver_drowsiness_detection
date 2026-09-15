@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, WebRtcMode, VideoHTMLAttributes
 import cv2
 import dlib
 import numpy as np
@@ -8,10 +8,6 @@ st.set_page_config(page_title="Driver Drowsiness Detector", layout="wide")
 st.title("Driver Drowsiness Detection System")
 st.subheader("Real-Time Fatigue Monitoring Interface")
 
-# Audio alert elements using HTML5
-DROWSY_ALARM = "https://soundjay.com"
-YAWN_ALARM = "https://soundjay.com"
-
 def calculate_ear(eye):
     A = np.linalg.norm(np.array(eye[1]) - np.array(eye[5]))
     B = np.linalg.norm(np.array(eye[2]) - np.array(eye[4]))
@@ -19,9 +15,9 @@ def calculate_ear(eye):
     return (A + B) / (2.0 * C)
 
 def calculate_mar(mouth):
-    A = np.linalg.norm(np.array(mouth[3]) - np.array(mouth[9]))
-    B = np.linalg.norm(np.array(mouth[5]) - np.array(mouth[7]))
-    C = np.linalg.norm(np.array(mouth[0]) - np.array(mouth[6]))
+    A = np.linalg.norm(np.array(mouth[13]) - np.array(mouth[19]))
+    B = np.linalg.norm(np.array(mouth[15]) - np.array(mouth[17]))
+    C = np.linalg.norm(np.array(mouth[12]) - np.array(mouth[16]))
     return (A + B) / (2.0 * C)
 
 detector = dlib.get_frontal_face_detector()
@@ -55,10 +51,10 @@ class DrowsinessTransformer(VideoTransformerBase):
             ear = (calculate_ear(left_eye) + calculate_ear(right_eye)) / 2.0
             mar = calculate_mar(mouth)
             
-            if ear < 0.25:
+            if ear < 0.23:
                 status = "DROWSY"
                 color = (0, 0, 255)
-            elif mar > 0.60:
+            elif mar > 0.55:
                 status = "YAWNING"
                 color = (0, 165, 255)
             else:
@@ -74,6 +70,7 @@ webrtc_streamer(
     key="drowsiness-detection", 
     mode=WebRtcMode.SENDRECV,
     video_transformer_factory=DrowsinessTransformer,
-    media_stream_constraints={"video": True, "audio": True},
+    media_stream_constraints={"video": True, "audio": False},
+    video_html_attrs=VideoHTMLAttributes(autoPlay=True, controls=False, muted=False),
     async_processing=True
 )
