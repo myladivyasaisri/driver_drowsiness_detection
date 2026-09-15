@@ -9,13 +9,35 @@ st.set_page_config(page_title="ADAS Dashboard", layout="wide")
 st.title("Driver Drowsiness Detection System")
 st.subheader("Real-Time Fatigue Monitoring Interface")
 
-# Audio tracks links for browser play
-DROWSY_ALARM_URL = "https://soundjay.com"
-YAWN_ALARM_URL = "https://soundjay.com"
-
-# Initialize single baseline variables
-if "state_holder" not in st.session_state:
-    st.session_state.state_holder = "AWAKE"
+st.markdown(
+    """
+    <audio id="drowsy_siren" loop>
+        <source src="https://soundjay.com" type="audio/mp3">
+    </audio>
+    <audio id="yawn_siren" loop>
+        <source src="https://soundjay.com" type="audio/mp3">
+    </audio>
+    <script>
+        function manageAlerts(status) {
+            var drowsyAudio = window.parent.document.getElementById('drowsy_siren');
+            var yawnAudio = window.parent.document.getElementById('yawn_siren');
+            if (!drowsyAudio || !yawnAudio) return;
+            
+            if (status === 'DROWSY') {
+                drowsyAudio.play().catch(function(e) {});
+                yawnAudio.pause();
+            } else if (status === 'YAWNING') {
+                yawnAudio.play().catch(function(e) {});
+                drowsyAudio.pause();
+            } else {
+                drowsyAudio.pause();
+                yawnAudio.pause();
+            }
+        }
+    </script>
+    """,
+    unsafe_allow_html=True
+)
 
 def calculate_ear(eye):
     A = np.linalg.norm(np.array(eye[1]) - np.array(eye[5]))
@@ -24,16 +46,16 @@ def calculate_ear(eye):
     return (A + B) / (2.0 * C)
 
 def calculate_mar(mouth):
-    A = np.linalg.norm(np.array(mouth[13]) - np.array(mouth[19])) # p51 - p59
-    B = np.linalg.norm(np.array(mouth[15]) - np.array(mouth[17])) # p53 - p57
-    C = np.linalg.norm(np.array(mouth[12]) - np.array(mouth[18])) # p49 - p55
+    A = np.linalg.norm(np.array(mouth[13]) - np.array(mouth[19]))
+    B = np.linalg.norm(np.array(mouth[15]) - np.array(mouth[17]))
+    C = np.linalg.norm(np.array(mouth) - np.array(mouth[6]))
     return (A + B) / (2.0 * C)
 
 detector = dlib.get_frontal_face_detector()
 try:
     predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 except:
-    st.error("Missing model file inside models/ folder!")
+    st.error("Missing model data file inside models/ folder!")
 
 class DrowsinessProcessor(VideoProcessorBase):
     def __init__(self):
@@ -82,9 +104,7 @@ class DrowsinessProcessor(VideoProcessorBase):
             cv2.putText(img, f"STATUS: {status}", (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
             cv2.putText(img, f"EAR: {ear:.2f} MAR: {mar:.2f}", (400, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 
-        if st.session_state.state_holder != status:
-            st.session_state.state_holder = status
-
+        st.components.v1.html(f"<script>window.parent.manageAlerts('{status}');</script>", height=0, width=0)
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 webrtc_streamer(
@@ -94,11 +114,3 @@ webrtc_streamer(
     media_stream_constraints={"video": True, "audio": False},
     async_processing=True
 )
-
-# Render Audio Engine Alerts Output
-if st.session_state.state_holder == "DROWSY":
-    st.audio(DROWSY_ALARM_URL, autoplay=True, loop=True)
-    st.error("🚨 DROWSINESS DETECTED! WAKE UP!")
-elif st.session_state.state_holder == "YAWNING":
-    st.audio(YAWN_ALARM_URL, autoplay=True, loop=True)
-    st.warning("⚠️ YAWNING DETECTED! TAKE A BREAK!")
