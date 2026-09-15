@@ -1,23 +1,27 @@
 # Driver Drowsiness Detection System
 ### *An Edge-AI Safety System for Real-Time Fatigue Monitoring*
 
+[![Streamlit App](https://streamlit.io)](https://driverdrowsinessdetection06.streamlit.app/)
+
 ---
 
 ## 📌 Project Overview
-This project is an advanced real-time computer vision framework designed to mitigate highway transit accidents caused by operator exhaustion and micro-sleep events [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System]. 
+This project is an advanced real-time computer vision framework designed to mitigate highway transit accidents caused by operator exhaustion and micro-sleep events. 
 
 By processing live camera frames, the system maps facial telemetry landmarks using spatial equations to calculate eye and mouth ratios, instantly executing audio alarms when safety limits are breached.
+
+🌐 **Live Web Application Link**: [driverdrowsinessdetection06.streamlit.app](https://driverdrowsinessdetection06.streamlit.app/)
 
 ---
 
 ## 🚀 Key System Features
 
 *   **Dynamic HUD Status Display**: Real-time driver conditions are flashed directly onto the video feed layout (`AWAKE`, `DROWSY (WARNING)`, or `DROWSY (CRITICAL!)`).
-*   **Unified Chrome-Green Mesh**: Standardized bright green boundaries (`BGR: 0, 255, 0`) draw clean outlines around ocular and labial zones for optimal low-light tracking [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System].
+*   **Unified Chrome-Green Mesh**: Standardized bright green boundaries (`BGR: 0, 255, 0`) draw clean outlines around ocular and labial zones for optimal low-light tracking.
 *   **Multi-Stage Escalated Alarm**:
     *   *Soft Warning*: Sounds single tones during repetitive yawn loops.
     *   *Critical Siren*: Sounds aggressive, rapid double-beeps during deep micro-sleeps.
-*   **Threaded Audio Subprocesses**: Uses background threads to play alert buzzers asynchronously, preventing display frame drops or screen lag [AnshumanSrivastava108/Real-Time-Drowsiness-Detection-System].
+*   **Threaded Audio Subprocesses**: Uses background threads to play alert buzzers asynchronously, preventing display frame drops or screen lag.
 *   **Black Box Event Logging**: Automatically records event logs with calendar timestamps into a local repository file for administrative safety audits.
 
 ---
@@ -36,7 +40,9 @@ driver_drowsiness_detection/
 │
 ├── config.py                                  # Calibration thresholds hub
 ├── main.py                                    # Central camera loops engine
+├── app.py                                     # Streamlit Cloud production engine
 ├── requirements.txt                           # Software dependencies list
+├── packages.txt                               # Linux server compilation bindings
 └── drowsiness_logs.txt                        # Automated telemetry data file
 ```
 
@@ -83,13 +89,19 @@ pip install -r requirements.txt
 ```
 
 ### 2. Neural Weights Initialization
-1. Download the pre-trained data file from the [Official Dlib Container](https://huggingface.co).
+1. Download the pre-trained data file from the Official Dlib Container.
 2. Save the compiled file as `shape_predictor_68_face_landmarks.dat` inside your `models/` directory.
 
-### 3. Running the Engine
+### 3. Running the Desktop Application Locally
 Initialize the central driver dashboard panel loop using your terminal interface:
 ```bash
 python main.py
+```
+
+### 4. Running the Web Server Instantly
+Launch the optimized browser interface container locally using Streamlit pipeline tools:
+```bash
+streamlit run app.py
 ```
 
 ---
@@ -99,15 +111,10 @@ python main.py
 
 ---
 
----
-
 ## 👩‍💻 Author
 
 ### MYLA DIVYA SAI SRI
 *Artificial Intelligence & Machine Learning (AI/ML) Student*
 
-*   **LinkedIn**: www.linkedin.com/in/myladivyasaisri
-*   **GitHub**: https://github.com/myladivyasaisri
-
----
-
+*   **LinkedIn**: [www.linkedin.com/in/myladivyasaisri](https://linkedin.com)
+*   **GitHub**: [github.com/myladivyasaisri](https://github.com/myladivyasaisri)
